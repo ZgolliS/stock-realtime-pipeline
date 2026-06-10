@@ -15,7 +15,8 @@ KEY_PATH     = os.getenv("GCP_KEY_PATH")
 TICKERS      = ["AAPL", "GOOGL", "MSFT", "AMZN", "META"]
 INTERVAL_SEC = 60  # Publier toutes les 60 secondes
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEY_PATH
+if KEY_PATH:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEY_PATH
 
 # ── Client Pub/Sub ────────────────────────────────────────────────────────────
 publisher = pubsub_v1.PublisherClient()
