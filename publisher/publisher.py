@@ -18,9 +18,16 @@ INTERVAL_SEC = 60  # Publier toutes les 60 secondes
 if KEY_PATH:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEY_PATH
 
-# ── Client Pub/Sub ────────────────────────────────────────────────────────────
-publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+
+publisher = None
+topic_path = None
+
+def get_publisher():
+    global publisher, topic_path
+    if publisher is None:
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+    return publisher, topic_path
 
 def fetch_stock_data(ticker: str) -> dict:
     """
@@ -46,14 +53,10 @@ def fetch_stock_data(ticker: str) -> dict:
     }
 
 def publish_message(data: dict):
-    """
-    Publie un message JSON dans Pub/Sub.
-    Pub/Sub n'accepte que des bytes → on encode en UTF-8.
-    future.result() attend la confirmation de réception par GCP.
-    """
+    pub, t_path = get_publisher()
     message_bytes = json.dumps(data).encode("utf-8")
-    future = publisher.publish(topic_path, message_bytes)
-    future.result()  # Attendre confirmation
+    future = pub.publish(t_path, message_bytes)
+    future.result()
     print(f"✅ Publié : {data['ticker']} | close={data['close']} | {data['timestamp']}")
 
 def run():
