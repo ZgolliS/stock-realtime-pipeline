@@ -12,12 +12,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
@@ -30,6 +30,6 @@ jobs:
 
       - name: Check code structure
         run: |
-          echo "✅ Publisher exists" && test -f publisher/publisher.py
-          echo "✅ Subscriber exists" && test -f subscriber/subscriber.py
-          echo "✅ Tests exist" && test -f tests/test_publisher.py
+          test -f publisher/publisher.py && echo "✅ Publisher exists"
+          test -f subscriber/subscriber.py && echo "✅ Subscriber exists"
+          test -f tests/test_publisher.py && echo "✅ Tests exist"
